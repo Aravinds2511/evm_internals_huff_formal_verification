@@ -1,0 +1,74 @@
+// send calldata -> function dispatcher -> function
+// 60008060093d393df3
+// 60058060093d393df35f3560e01c
+
+// 00000000000000000000000000000000000000000000000000000000000000ff
+// 0000000000000000000000000000000000000000000000000000000000000000ff00000000000000000000000000000000000000000000000000000000000000
+
+// Interface 
+#define function updateHorseNumber(uint256) nonpayable returns()
+#define function readNumberOfHorses() view returns()
+
+#define constant NUMBER_OF_HORSES_STORAGE_SLOT = FREE_STORAGE_POINTER()
+
+#define macro MAIN() = takes(0) returns(0) {
+    // TOP [] BOTTOM of stack -- for stack visualization --
+    0x00 // [0]
+    calldataload //[calldata]
+    // right shift 224 bits/28 bytes from the 32 bytes calldata to get the function selector
+    0xe0 // [0xe0, calldata]
+    shr  // [function_selector]
+
+    // readNumberOfHorses() - 0xe026c017
+    // updateHorseNumber(uint256) - 0xcdfead2e
+
+    // duplicating functin selector for checking with the other function_selector if required
+
+    dup1                           // [function_selector, function_selector]
+    __FUNC_SIG(updateHorseNumber)  // [0xcdfead2e, function_selector, function_selector]
+    eq                             // [true_if_func_selector_match, function_selector]
+    updateJump                     // [program_counter_byte_of_updateHorseNumber_code, true_if_func_selector_match, function_selector]
+    jumpi                          // [function_selector]
+    __FUNC_SIG(readNumberOfHorses) // [0xe026c017, function_selector]
+    eq                             // [true_if_func_selector_match]
+    readJump                       // [program_counter_byte_of_readNumberOfHorses, true_if_func_selector_match]
+    jumpi                          // []
+    // revert if the function selector is not present
+    0x00                           // [0]
+    0x00                           // [0, 0] offset and size_of_revert_data in memory
+    revert                         // []
+
+    
+    // getting the program counter for the func updateHorseNumber
+    updateJump: 
+        SET_NUMBER_OF_HORSES()
+    // getting the program counter for the func readNumberOfHorses
+    readJump: 
+        GET_NUMBER_OF_HORSES()
+}
+
+#define macro SET_NUMBER_OF_HORSES() = takes(0) returns(0) {
+    // 0x04         // [0x04]
+    // calldataload // [store_value]
+    // 0x00         // [0x00, store_value]
+    // sstore       // []
+    // stop
+
+    0x04                                // [0x04]
+    calldataload                        // [store_value]
+    [NUMBER_OF_HORSES_STORAGE_SLOT]     // [0x00, store_value]
+    sstore                              // []
+    stop
+}
+
+#define macro GET_NUMBER_OF_HORSES() = takes(0) returns(0) {
+    [NUMBER_OF_HORSES_STORAGE_SLOT] // [0x00]
+    sload                           // [store_value]
+    0x00                            // [0x00]   
+    mstore                          // []         // Memory: [store_value]
+    0x20                            // [0x20] // 32 bytes
+    0x00                            // [0x00, 0x20]
+    return                          // [] 
+}
+
+// Runtime Bytecode : 5f3560e01c8063cdfead2e1461001d5763e026c01714610024575f5ffd5b6004355f55005b5f545f5260205ff3
