@@ -104,18 +104,20 @@ JUMP         // [calldata[0x04:]_32bytes, 0x0052, function_selector_4_bytes]
 // ---pc - 0x0052---
 JUMPDEST     // [function_selector_4_bytes]
 STOP         // [function_selector_4_bytes]  // HALTS EXECUTION
-JUMPDEST
-PUSH2 0x005c
-PUSH2 0x007b
-JUMP
-JUMPDEST
-PUSH1 0x40
-MLOAD
-PUSH2 0x0069
-SWAP2
-SWAP1
-PUSH2 0x00f4
-JUMP
+// ---pc - 0x0054---
+JUMPDEST       // [function_selector_4_bytes]
+PUSH2 0x005c   // [0x005c, function_selector_4_bytes]
+PUSH2 0x007b   // [0x007b, 0x005c, function_selector_4_bytes]
+JUMP           // [0x005c, function_selector_4_bytes]
+// ---pc - 0x005c---
+JUMPDEST       // [stored_value, function_selector_4_bytes]
+PUSH1 0x40     // [0x40, stored_value, function_selector_4_bytes]
+MLOAD          // [free_memory_pointer(0x80), stored_value, function_selector_4_bytes]
+PUSH2 0x0069   // [0x0069, free_memory_pointer(0x80), stored_value, function_selector_4_bytes]
+SWAP2          // [stored_value, free_memory_pointer(0x80), 0x0069, function_selector_4_bytes]
+SWAP1          // [free_memory_pointer(0x80), stored_value, 0x0069, function_selector_4_bytes]
+PUSH2 0x00f4   // [0x00f4, free_memory_pointer(0x80), stored_value, 0x0069, function_selector_4_bytes]
+JUMP           // [free_memory_pointer(0x80), stored_value, 0x0069, function_selector_4_bytes]
 JUMPDEST
 PUSH1 0x40
 MLOAD
@@ -123,6 +125,7 @@ DUP1
 SWAP2
 SUB
 SWAP1
+// returns 32 bytes from memory where it was mload-ed
 RETURN
 // ---pc - 0x0072---
 JUMPDEST  // [calldata[0x04:]_32bytes, 0x0052, function_selector_4_bytes]
@@ -134,14 +137,17 @@ SSTORE    // [calldata[0x04:]_32bytes, calldata[0x04:]_32bytes, 0x0052, function
 POP       // [calldata[0x04:]_32bytes, 0x0052, function_selector_4_bytes]  
 POP       // [0x0052, function_selector_4_bytes]  
 JUMP      // [function_selector_4_bytes]
-JUMPDEST
-PUSH0
-DUP1
-SLOAD
-SWAP1
-POP
-SWAP1
-JUMP
+
+// START OF THE READNUMBEROFHORSES FUNCTION 
+// ---pc - 0x007b---
+JUMPDEST  // [0x005c, function_selector_4_bytes]
+PUSH0     // [0x00, 0x005c, function_selector_4_bytes]
+DUP1      // [0x00, 0x00, 0x005c, function_selector_4_bytes]
+SLOAD     // [stored_value, 0x00, 0x005c, function_selector_4_bytes]
+SWAP1     // [0x00, stored_value, 0x005c, function_selector_4_bytes]
+POP       // [stored_value, 0x005c, function_selector_4_bytes]
+SWAP1     // [0x005c, stored_value, function_selector_4_bytes]
+JUMP      // [stored_value, function_selector_4_bytes]
 // ---pc - 0x0083---
 JUMPDEST // [0x00ce, 0x00, 0x04, calldata_size_bytes, 0x004d, 0x0052, function_selector_4_bytes]
 PUSH0    // [0x00, 0x00ce, 0x00, 0x04, calldata_size_bytes, 0x004d, 0x0052, function_selector_4_bytes]
@@ -156,7 +162,7 @@ POP   // [calldata[0x04:]_32bytes, calldata[0x04:]_32bytes, 0x0099, calldata[0x0
 SWAP2 // [0x0099, calldata[0x04:]_32bytes, calldata[0x04:]_32bytes, calldata[0x04:]_32bytes, 0x00b4, calldata[0x04:]_32bytes, 0x04, calldata_size_bytes, 0x00dc, 0x00, 0x00, 0x04, calldata_size_bytes, 0x004d, 0x0052, function_selector_4_bytes]
 SWAP1 // [calldata[0x04:]_32bytes, 0x0099, calldata[0x04:]_32bytes, calldata[0x04:]_32bytes, 0x00b4, calldata[0x04:]_32bytes, 0x04, calldata_size_bytes, 0x00dc, 0x00, 0x00, 0x04, calldata_size_bytes, 0x004d, 0x0052, function_selector_4_bytes]
 POP   // [0x0099, calldata[0x04:]_32bytes, calldata[0x04:]_32bytes, 0x00b4, calldata[0x04:]_32bytes, 0x04, calldata_size_bytes, 0x00dc, 0x00, 0x00, 0x04, calldata_size_bytes, 0x004d, 0x0052, function_selector_4_bytes]
-JUMP // [calldata[0x04:]_32bytes, calldata[0x04:]_32bytes, 0x00b4, calldata[0x04:]_32bytes, 0x04, calldata_size_bytes, 0x00dc, 0x00, 0x00, 0x04, calldata_size_bytes, 0x004d, 0x0052, function_selector_4_bytes]
+JUMP  // [calldata[0x04:]_32bytes, calldata[0x04:]_32bytes, 0x00b4, calldata[0x04:]_32bytes, 0x04, calldata_size_bytes, 0x00dc, 0x00, 0x00, 0x04, calldata_size_bytes, 0x004d, 0x0052, function_selector_4_bytes]
 // ---pc - 0x0090---
 JUMPDEST     // [calldata[0x04:]_32bytes, 0x00b4, calldata[0x04:]_32bytes, 0x04, calldata_size_bytes, 0x00dc, 0x00, 0x00, 0x04, calldata_size_bytes, 0x004d, 0x0052, function_selector_4_bytes]
 PUSH2 0x0099 // [0x0099, calldata[0x04:]_32bytes, 0x00b4, calldata[0x04:]_32bytes, 0x04, calldata_size_bytes, 0x00dc, 0x00, 0x00, 0x04, calldata_size_bytes, 0x004d, 0x0052, function_selector_4_bytes]
@@ -169,6 +175,7 @@ DUP2    // [calldata[0x04:]_32bytes, calldata[0x04:]_32bytes, calldata[0x04:]_32
 EQ      // [(calldata[0x04:]_32bytes == calldata[0x04:]_32bytes), calldata[0x04:]_32bytes, 0x00b4, calldata[0x04:]_32bytes, 0x04, calldata_size_bytes, 0x00dc, 0x00, 0x00, 0x04, calldata_size_bytes, 0x004d, 0x0052, function_selector_4_bytes]
 PUSH2 0x00a3 // [0x00a3, (calldata[0x04:]_32bytes == calldata[0x04:]_32bytes), calldata[0x04:]_32bytes, 0x00b4, calldata[0x04:]_32bytes, 0x04, calldata_size_bytes, 0x00dc, 0x00, 0x00, 0x04, calldata_size_bytes, 0x004d, 0x0052, function_selector_4_bytes]
 JUMPI   // [calldata[0x04:]_32bytes, 0x00b4, calldata[0x04:]_32bytes, 0x04, calldata_size_bytes, 0x00dc, 0x00, 0x00, 0x04, calldata_size_bytes, 0x004d, 0x0052, function_selector_4_bytes]
+// revert code
 PUSH0
 DUP1
 REVERT
@@ -205,7 +212,7 @@ SUB          // [(calldata_size_bytes - 0x04), 0x20, 0x00, 0x04, calldata_size_b
 SLT          // [(calldata_size_bytes - 0x04) < 0x20, 0x00, 0x04, calldata_size_bytes, 0x004d, 0x0052, function_selector_4_bytes]
 ISZERO       // [(calldata_size_bytes - 0x04) < 0x20 == 0, 0x00, 0x04, calldata_size_bytes, 0x004d, 0x0052, function_selector_4_bytes]
 PUSH2 0x00cf // [0x00cf, (calldata_size_bytes - 0x04) < 0x20, 0x00, 0x04, calldata_size_bytes, 0x004d, 0x0052, function_selector_4_bytes]
-// ---jump if there is calldata other then func selector---
+// ---jump if there is calldata other than func selector---
 JUMPI        // [0x00, 0x04, calldata_size_bytes, 0x004d, 0x0052, function_selector_4_bytes]
 PUSH2 0x00ce // [0x00ce, 0x00, 0x04, calldata_size_bytes, 0x004d, 0x0052, function_selector_4_bytes]
 PUSH2 0x0083 // [0x0083, 0x00ce, 0x00, 0x04, calldata_size_bytes, 0x004d, 0x0052, function_selector_4_bytes]
@@ -232,37 +239,43 @@ SWAP2        // [calldata_size_bytes, 0x04, 0x004d, calldata[0x04:]_32bytes, 0x0
 POP          // [0x04, 0x004d, calldata[0x04:]_32bytes, 0x0052, function_selector_4_bytes]
 POP          // [0x004d, calldata[0x04:]_32bytes, 0x0052, function_selector_4_bytes]
 JUMP         // [calldata[0x04:]_32bytes, 0x0052, function_selector_4_bytes]
-JUMPDEST
-PUSH2 0x00ee
-DUP2
-PUSH2 0x0087
-JUMP
-JUMPDEST
-DUP3
-MSTORE
-POP
-POP
-JUMP
-JUMPDEST
-PUSH0
-PUSH1 0x20
-DUP3
-ADD
-SWAP1
-POP
-PUSH2 0x0107
-PUSH0
-DUP4
-ADD
-DUP5
-PUSH2 0x00e5
-JUMP
+// ---pc - 0x00e5---
+JUMPDEST      // [stored_value, 0x80, 0x0107, 0xa0, free_memory_pointer(0x80), stored_value, 0x0069, function_selector_4_bytes]
+PUSH2 0x00ee  // [0x00ee, stored_value, 0x80, 0x0107, 0xa0, free_memory_pointer(0x80), stored_value, 0x0069, function_selector_4_bytes]
+DUP2          // [stored_value, 0x00ee, stored_value, 0x80, 0x0107, 0xa0, free_memory_pointer(0x80), stored_value, 0x0069, function_selector_4_bytes]
+PUSH2 0x0087  // [0x0087, stored_value, 0x00ee, stored_value, 0x80, 0x0107, 0xa0, free_memory_pointer(0x80), stored_value, 0x0069, function_selector_4_bytes]
+JUMP          // [stored_value, 0x00ee, stored_value, 0x80, 0x0107, 0xa0, free_memory_pointer(0x80), stored_value, 0x0069, function_selector_4_bytes]
+// ---pc - 0x00ee---
+JUMPDEST      // [stored_value, 0x80, 0x0107, 0xa0, free_memory_pointer(0x80), stored_value, 0x0069, function_selector_4_bytes]
+DUP3          // [0x0107, stored_value, 0x80, 0x0107, 0xa0, free_memory_pointer(0x80), stored_value, 0x0069, function_selector_4_bytes]
+MSTORE        // [0x80, 0x0107, 0xa0, free_memory_pointer(0x80), stored_value, 0x0069, function_selector_4_bytes]                        // [stored_value] offset - 0x0107
+POP           // [0x0107, 0xa0, free_memory_pointer(0x80), stored_value, 0x0069, function_selector_4_bytes]   
+POP           // [0xa0, free_memory_pointer(0x80), stored_value, 0x0069, function_selector_4_bytes]
+JUMP          // [free_memory_pointer(0x80), stored_value, 0x0069, function_selector_4_bytes]
+// ---pc - 0x00f4---
+JUMPDEST      // [free_memory_pointer(0x80), stored_value, 0x0069, function_selector_4_bytes]
+PUSH0         // [0x00, free_memory_pointer(0x80), stored_value, 0x0069, function_selector_4_bytes]
+PUSH1 0x20    // [0x20, 0x00, free_memory_pointer(0x80), stored_value, 0x0069, function_selector_4_bytes]
+DUP3          // [free_memory_pointer(0x80), 0x20, 0x00, free_memory_pointer(0x80), stored_value, 0x0069, function_selector_4_bytes]
+ADD           // [0xa0, 0x00, free_memory_pointer(0x80), stored_value, 0x0069, function_selector_4_bytes]
+SWAP1         // [0x00, 0xa0, free_memory_pointer(0x80), stored_value, 0x0069, function_selector_4_bytes]
+POP           // [0xa0, free_memory_pointer(0x80), stored_value, 0x0069, function_selector_4_bytes]]
+PUSH2 0x0107  // [0x0107, 0xa0, free_memory_pointer(0x80), stored_value, 0x0069, function_selector_4_bytes]
+PUSH0         // [0x00, 0x0107, 0xa0, free_memory_pointer(0x80), stored_value, 0x0069, function_selector_4_bytes]
+DUP4          // [free_memory_pointer(0x80), 0x00, 0x0107, 0xa0, free_memory_pointer(0x80), stored_value, 0x0069, function_selector_4_bytes]
+ADD           // [0x80, 0x0107, 0xa0, free_memory_pointer(0x80), stored_value, 0x0069, function_selector_4_bytes]
+DUP5          // [stored_value, 0x80, 0x0107, 0xa0, free_memory_pointer(0x80), stored_value, 0x0069, function_selector_4_bytes]
+PUSH2 0x00e5  // [0x00e5, stored_value, 0x80, 0x0107, 0xa0, free_memory_pointer(0x80), stored_value, 0x0069, function_selector_4_bytes]
+JUMP          // [stored_value, 0x80, 0x0107, 0xa0, free_memory_pointer(0x80), stored_value, 0x0069, function_selector_4_bytes]
 JUMPDEST
 SWAP3
 SWAP2
 POP
 POP
 JUMP
+
+// --------------------------------------------------
+// METADATA
 INVALID
 LOG2
 PUSH5 0x6970667358
@@ -279,3 +292,18 @@ PREVRANDAO
 BLOCKHASH
 PUSH16 0x3362bb5018edda82d7553a662b64736f
 PUSH13 0x63430008140033
+
+
+// COPY OF THE JUMPDEST CODE IN PC - 0x0087 - for read function 
+// ---pc - 0x0087---
+JUMPDEST   // [stored_value, 0x00ee, stored_value, 0x80, 0x0107, 0xa0, free_memory_pointer(0x80), stored_value, 0x0069, function_selector_4_bytes]
+PUSH0      // [0x00, stored_value, 0x00ee, stored_value, 0x80, 0x0107, 0xa0, free_memory_pointer(0x80), stored_value, 0x0069, function_selector_4_bytes]
+DUP2       // [stored_value, 0x00, stored_value, 0x00ee, stored_value, 0x80, 0x0107, 0xa0, free_memory_pointer(0x80), stored_value, 0x0069, function_selector_4_bytes]
+SWAP1      // [0x00, stored_value, stored_value, 0x00ee, stored_value, 0x80, 0x0107, 0xa0, free_memory_pointer(0x80), stored_value, 0x0069, function_selector_4_bytes]
+POP        // [stored_value, stored_value, 0x00ee, stored_value, 0x80, 0x0107, 0xa0, free_memory_pointer(0x80), stored_value, 0x0069, function_selector_4_bytes]
+SWAP2      // [0x00ee, stored_value, stored_value, stored_value, 0x80, 0x0107, 0xa0, free_memory_pointer(0x80), stored_value, 0x0069, function_selector_4_bytes]
+SWAP1      // [stored_value, 0x00ee, stored_value, stored_value, 0x80, 0x0107, 0xa0, free_memory_pointer(0x80), stored_value, 0x0069, function_selector_4_bytes]
+POP        // [0x00ee, stored_value, stored_value, 0x80, 0x0107, 0xa0, free_memory_pointer(0x80), stored_value, 0x0069, function_selector_4_bytes]
+JUMP       // [stored_value, stored_value, 0x80, 0x0107, 0xa0, free_memory_pointer(0x80), stored_value, 0x0069, function_selector_4_bytes]
+
+// pc - program counter
