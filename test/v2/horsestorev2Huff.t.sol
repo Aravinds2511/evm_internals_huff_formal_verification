@@ -5,7 +5,7 @@ import {Base_TestV2, HorseStore} from "./base_v2_test.t.sol";
 import {HuffDeployer} from "foundry-huff/HuffDeployer.sol";
 
 contract HorseStoreHuffV2 is Base_TestV2 {
-    string public constant horseStoreLocation = "horsestoreV2/horsestore";
+    string public constant horseStoreLocation = "horsestorev2/horsestoreV2";
 
     function setUp() public override {
         horseStore = HorseStore(
