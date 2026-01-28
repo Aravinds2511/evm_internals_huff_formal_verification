@@ -10,3 +10,10 @@
 #### forge test --debug --match-path <test-path> --mt <test-function>-vvvv
 
 ## IMPORTANT NOTES
+
+## Installing huff
+```bash
+curl -L get.huff.sh | bash
+source ~/.bashrc
+huffup
+```
